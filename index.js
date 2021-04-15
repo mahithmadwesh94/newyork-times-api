@@ -3,7 +3,7 @@ const baseUrl = 'https://api.nytimes.com/svc/topstories/v2/home.json?api-key=';
 const apiKey = '1adXxys8r8s0pwyjjBYiPYj47bj3y13y';
 
 var newsContent = [];
-var newsRow = createElement('div', 'row');
+var newsRow = createElement('div', 'row m-2 p-2');
 var NavMenu = new Set();
 
 fetch(baseUrl + apiKey).then((response) => {
@@ -196,7 +196,7 @@ function makeMeActive(event) {
 function createArticle(obj) {
 
     //card creation
-    let cardDiv = createElement('div', 'card m-2');
+    let cardDiv = createElement('div', 'card m-2 p-2');
 
     let cardRow = createElement('div', 'row');
     cardDiv.append(cardRow);
@@ -210,12 +210,24 @@ function createArticle(obj) {
     heading2.innerText = obj.title;
 
     //Date formattting for published date
-    let publishedMonth = monthNames[new Date(obj.published_date).getMonth()] + ' ' + new Date(obj.published_date).getDay();
+    let publishedMonth = monthNames[new Date(obj.created_date).getMonth()] + ' ' + new Date(obj.created_date).getDay();
+
     let heading3 = createElement('h5', 'card-title');
-    heading3.innerText = obj.publishedMonth;
+    heading3.innerText = publishedMonth;
 
     let cardContent = createElement('p', 'card-text');
-    cardContent.innerText = obj.abstract;
+    cardContent.innerText = obj.abstract + '(' + obj.item_type + ')';;
+
+    //byline
+
+    let pTag1 = createElement('p', 'card-text');
+    let byLine = createElement('small', 'text-muted');
+    byLine.innerText = obj.byline;
+
+
+    pTag1.append(byLine);
+
+
 
     //last updated
     let pTag = createElement('p', 'card-text');
@@ -226,13 +238,18 @@ function createArticle(obj) {
     console.log(finalResult);
 
     smallTag.innerText = 'Last Updated ' + finalResult + 'min ago';
+
+
     pTag.append(smallTag);
 
 
-    let heading4 = createElement('h5', 'card-title click-link text-highlight');
+
+
+    let heading4 = createElement('a', 'card-title click-link text-highlight');
+    heading4.setAttribute('href', obj.short_url)
     heading4.innerText = 'Continue Reading';
 
-    cardBody.append(heading1, heading2, heading3, cardContent, pTag, heading4);
+    cardBody.append(heading1, heading2, heading3, cardContent, pTag1, pTag, heading4);
     cardRow1.append(cardBody);
 
 
@@ -240,6 +257,7 @@ function createArticle(obj) {
     cardRow2.style = 'padding:0;';
 
     let img = createElement('img', 'img-fluid img-thumbnail float-end click-link');
+    img.style = 'width:100%;'
     img.src = obj.multimedia[4].url;
 
     cardRow2.append(img);
@@ -257,7 +275,7 @@ function homePage() {
     img.src = 'images/1920px-NewYorkTimes.svg.png'
     homeRow.append(img);
 
-    let homeRow2 = createElement('div', 'row mx-5');
+    let homeRow2 = createElement('div', 'row m-2');
     NavMenu.forEach((x) => {
         if (x !== 'Home')
             homeRow2.append(createHomeCard(x))
